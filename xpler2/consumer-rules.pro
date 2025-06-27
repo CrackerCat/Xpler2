@@ -31,26 +31,35 @@
     public void initZygote(...);
     public void handleLoadPackage(...);
 }
--keep,allowobfuscation,allowoptimization class ** extends io.github.xpler2.base.BaseLsposedModule {
+-keep class ** extends io.github.xpler2.base.BaseLsposedModule {
     public <init>(...);
     public void onPackageLoaded(...);
     public void onSystemServerLoaded(...);
 }
--keep,allowobfuscation class io.github.xpler2.hooker.HookerExtKt {
-    hooker*(...);
-}
+-keep,allowobfuscation class io.github.xpler2.callback.HookerCallback { *; }
 -keep,allowobfuscation class io.github.xpler2.callback.HookerCallback {
-    get*();
+    getModule();
     onBefore(...);
     onAfter(...);
     onUnhook(...);
 }
 -keep,allowobfuscation interface io.github.xpler2.callback.HookerFunction { *; }
 -keep,allowobfuscation class ** implements io.github.xpler2.callback.HookerFunction {
-    get*();
+    getModule();
     onBefore(...);
     onAfter(...);
     onUnhook(...);
+}
+-keep,allowobfuscation class io.github.xpler2.hooker.HookerExtKt {
+    hooker*(...);
+}
+-keepclassmembers class io.github.xpler2.impl.LsposedHooker {
+    public static *** before(...);
+    public static *** after(...);
+}
+-keepclassmembers class io.github.xpler2.impl.XposedHooker {
+    beforeHookedMethod(...);
+    afterHookedMethod(...);
 }
 -keep,allowobfuscation class io.github.xpler2.params.BeforeParams {
     get*();
@@ -94,6 +103,27 @@
 -keep,allowobfuscation class io.github.xpler2.XplerLogger {
     logger(...);
 }
+
+## 忽略警告-引用项目
+-dontwarn de.robv.android.xposed.IXposedHookLoadPackage
+-dontwarn de.robv.android.xposed.IXposedHookZygoteInit$StartupParam
+-dontwarn de.robv.android.xposed.IXposedHookZygoteInit
+-dontwarn de.robv.android.xposed.XC_MethodHook$Unhook
+-dontwarn de.robv.android.xposed.XC_MethodHook
+-dontwarn de.robv.android.xposed.XC_MethodHook$MethodHookParam
+-dontwarn de.robv.android.xposed.XposedBridge
+-dontwarn de.robv.android.xposed.callbacks.XC_LoadPackage$LoadPackageParam
+-dontwarn io.github.libxposed.api.XposedInterface$Hooker
+-dontwarn io.github.libxposed.api.XposedInterface$MethodUnhooker
+-dontwarn io.github.libxposed.api.XposedInterface
+-dontwarn io.github.libxposed.api.XposedModule
+-dontwarn io.github.libxposed.api.XposedModuleInterface$ModuleLoadedParam
+-dontwarn io.github.libxposed.api.XposedModuleInterface$PackageLoadedParam
+-dontwarn io.github.libxposed.api.XposedInterface$AfterHookCallback
+-dontwarn io.github.libxposed.api.XposedInterface$BeforeHookCallback
+-dontwarn io.github.libxposed.api.annotations.AfterInvocation
+-dontwarn io.github.libxposed.api.annotations.BeforeInvocation
+-dontwarn io.github.libxposed.api.annotations.XposedHooker
 
 ## 以下是备注说明，避免忘记
 # -keepclassmembers 允许混淆类名，但是允许保留成员名不被混淆(简单来说就是被保留的类成员名不被混淆，类名可以被混淆)

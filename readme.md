@@ -40,12 +40,21 @@ fun init(module: XplerModuleInterface) { // must be `public static` and paramete
 
 最后, 点击右上角的Run按钮, 即可完成一个简单的Xposed模块逻辑。
 
-关于Xpler2文档及使用案例, 请查看本项目的`app`模块和相关方法注释(若打算运行本项目你需要首先参考[LSPosed-Wiki](https://github.com/LSPosed/LSPosed/wiki/Develop-Xposed-Modules-Using-Modern-Xposed-API#early-access)拉取[api](https://github.com/libxposed/api)进行`publishToMavenLocal`)。
+关于Xpler2文档及使用案例, 请查看本项目的`app`模块和相关方法注释
+
+若打算运行本项目你需要首先参考 [LSPosed-Wiki](https://github.com/LSPosed/LSPosed/wiki/Develop-Xposed-Modules-Using-Modern-Xposed-API#early-access) 拉取 [api](https://github.com/libxposed/api) 进行 `publishToMavenLocal`。
 
 
 
 ## 其它说明
 
-> 注意: Xpler2使用kotlin编写, 不含kotlin相关依赖的纯java项目, 可能需要自行添加kotlin标准库`kotlin-stdlib`的依赖支持。
-> release混淆时, 请注意保留你的混淆入口, 如: `-keep,allowobfuscation class com.example.app.Init { public static **(io.github.xpler2.XplerModuleInterface); }`。
+- 注意: Xpler2使用kotlin编写, 不含kotlin相关依赖的纯java项目, 可能需要自行添加kotlin标准库`kotlin-stdlib`的依赖支持。
+
+- 另外，在release混淆时, 请注意保留你的混淆入口, 如: 
+
+  ```kotlin
+  -keep,allowobfuscation class com.example.app.Init { 
+      public static **(io.github.xpler2.XplerModuleInterface);
+  }
+  ```
 

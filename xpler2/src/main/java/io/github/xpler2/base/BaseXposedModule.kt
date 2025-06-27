@@ -26,8 +26,4 @@ abstract class BaseXposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage 
 
     protected val module: XplerModuleInterface
         get() = mModule
-
-    fun log(message: String) = mModule.log(message)
-
-    fun log(message: String, throwable: Throwable) = mModule.log(message, throwable)
 }

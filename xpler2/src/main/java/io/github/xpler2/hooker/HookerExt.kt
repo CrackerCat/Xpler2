@@ -12,14 +12,14 @@ import java.lang.reflect.Modifier
  * Hook method
  * ```
  * class MyHooker : HookerCallback() {
- *   override fun onBefore(callback: BeforeParams) {
- *     log("onBefore:$this")
+ *   override fun onBefore(params: BeforeParams) {
+ *     log("onBefore:params")
  *   }
- *   override fun onAfter(callback: AfterParams) {
- *     log("onBefore:$this")
+ *   override fun onAfter(params: AfterParams) {
+ *     log("onAfter:params")
  *   }
- *   override fun onUnhook(callback: UnhookParams) {
- *     log("onBefore:$this")
+ *   override fun onUnhook(params: UnhookParams) {
+ *     log("onUnhook:params")
  *   }
  * }
  *
@@ -64,14 +64,14 @@ fun Method.hooker(priority: Int, callback: HookerFunction.() -> Unit): UnhookPar
  * Hook method
  * ```
  * class MyHooker : HookerCallback() {
- *   override fun onBefore(callback: BeforeParams) {
- *     log("onBefore:$this")
+ *   override fun onBefore(params: BeforeParams) {
+ *     log("onBefore:params")
  *   }
- *   override fun onAfter(callback: AfterParams) {
- *     log("onBefore:$this")
+ *   override fun onAfter(params: AfterParams) {
+ *     log("onAfter:params")
  *   }
- *   override fun onUnhook(callback: UnhookParams) {
- *     log("onBefore:$this")
+ *   override fun onUnhook(params: UnhookParams) {
+ *     log("onUnhook:params")
  *   }
  * }
  *
