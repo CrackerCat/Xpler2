@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("io.github.xpler2.compiler") version "0.0.1"
+    alias(libs.plugins.xpler2.compiler)
 }
 
 android {
@@ -19,10 +19,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("sign") {
+            storeFile = file("../keystore.jks")
+            storePassword = "123456"
+            keyAlias = "Xpler2"
+            keyPassword = "123456"
+        }
+    }
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("sign")
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("sign")
         }
     }
     compileOptions {

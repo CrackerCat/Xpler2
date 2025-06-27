@@ -7,7 +7,7 @@ activityCompose = "1.10.1"
 composeBom = "2025.06.01"
 xposed-api = "82"
 lspxposed-api = "100"
-xpler2 = "0.0.1"
+xpler2 = "0.0.2"
 jetbrainsKotlinJvm = "2.1.21"
 
 [libraries]
@@ -30,4 +30,5 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+xpler2-compiler = { id = "io.github.xpler2.compiler", version.ref = "xpler2" }
 

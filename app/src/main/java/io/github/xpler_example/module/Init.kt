@@ -10,9 +10,11 @@ import io.github.xpler2.hooker.hooker
     description = "Xpler Example Module",
     scope = ["com.tencent.mm"],
     lsposedCompatAnnotation = false,
+    lsposed = false,
 )
 fun init(module: XplerModuleInterface) {
     try {
+        Log.i("Xpler2", "Hello from Xpler Example Module (Kotlin)!")
         if (!module.isFirstPackage) return // skip if not the first package
         if (module.packageName != "com.tencent.mm") return // skip if not the target package
         if (module.processName.indexOf(":") != -1) return // skip sub-processes
