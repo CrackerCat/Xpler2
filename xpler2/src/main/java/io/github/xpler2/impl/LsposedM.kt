@@ -153,6 +153,9 @@ internal class LsposedM(
     override val processName: String
         get() = mProcessName
 
+    override val modulePackageName: String?
+        get() = null // ASM bytecode injection will be implemented by the xpler2-compiler plugin.
+
     override val modulePath: String?
         get() = mXposedInterface.applicationInfo.sourceDir
 
@@ -170,7 +173,6 @@ internal class LsposedM(
     }
 
     @Throws(
-        IllegalAccessException::class,
         IllegalArgumentException::class,
         InvocationTargetException::class,
     )
@@ -188,7 +190,6 @@ internal class LsposedM(
     }
 
     @Throws(
-        IllegalAccessException::class,
         IllegalArgumentException::class,
         InvocationTargetException::class,
     )
@@ -206,12 +207,12 @@ internal class LsposedM(
         return Resources(assets, resources.displayMetrics, resources.configuration)
     }
 
-    @Throws(IllegalAccessException::class)
+    @Throws(UnsupportedOperationException::class)
     override fun deoptimize(method: Method): Boolean {
         return mXposedInterface.deoptimize(method)
     }
 
-    @Throws(IllegalAccessException::class)
+    @Throws(UnsupportedOperationException::class)
     override fun <T> deoptimize(constructor: Constructor<T>): Boolean {
         return mXposedInterface.deoptimize(constructor)
     }
@@ -220,6 +221,7 @@ internal class LsposedM(
         InvocationTargetException::class,
         IllegalArgumentException::class,
         IllegalAccessException::class,
+        UnsupportedOperationException::class,
     )
     override fun invokeOrigin(method: Method, instance: Any, vararg args: Any?): Any? {
         return mXposedInterface.invokeOrigin(method, instance, *args)
@@ -229,6 +231,7 @@ internal class LsposedM(
         InvocationTargetException::class,
         IllegalArgumentException::class,
         IllegalAccessException::class,
+        UnsupportedOperationException::class,
     )
     override fun <T> invokeOrigin(constructor: Constructor<T>, instance: T, vararg args: Any?) {
         instance ?: throw IllegalArgumentException("instance is null")
@@ -239,6 +242,7 @@ internal class LsposedM(
         InvocationTargetException::class,
         IllegalArgumentException::class,
         IllegalAccessException::class,
+        UnsupportedOperationException::class,
     )
     override fun invokeSpecial(method: Method, instance: Any, vararg args: Any?): Any? {
         return mXposedInterface.invokeSpecial(method, instance, *args)
@@ -248,6 +252,7 @@ internal class LsposedM(
         InvocationTargetException::class,
         IllegalArgumentException::class,
         IllegalAccessException::class,
+        UnsupportedOperationException::class,
     )
     override fun <T> invokeSpecial(method: Constructor<T>, instance: T, vararg args: Any?) {
         instance ?: throw IllegalArgumentException("instance is null")
@@ -256,9 +261,10 @@ internal class LsposedM(
 
     @Throws(
         InvocationTargetException::class,
-        java.lang.IllegalArgumentException::class,
+        IllegalArgumentException::class,
         IllegalAccessException::class,
         InstantiationException::class,
+        UnsupportedOperationException::class,
     )
     override fun <T> newInstanceOrigin(constructor: Constructor<T>, vararg args: Any): T {
         return mXposedInterface.newInstanceOrigin(constructor, *args)
@@ -266,9 +272,10 @@ internal class LsposedM(
 
     @Throws(
         InvocationTargetException::class,
-        java.lang.IllegalArgumentException::class,
+        IllegalArgumentException::class,
         IllegalAccessException::class,
         InstantiationException::class,
+        UnsupportedOperationException::class,
     )
     override fun <T, U> newInstanceSpecial(
         constructor: Constructor<T>,
@@ -278,17 +285,17 @@ internal class LsposedM(
         return mXposedInterface.newInstanceSpecial(constructor, subClass, *args)
     }
 
-    @Throws(IllegalAccessException::class)
+    @Throws(UnsupportedOperationException::class)
     override fun getRemotePreferences(group: String): SharedPreferences {
         return mXposedInterface.getRemotePreferences(group)
     }
 
-    @Throws(IllegalAccessException::class)
+    @Throws(UnsupportedOperationException::class)
     override fun listRemoteFiles(): Array<String> {
         return mXposedInterface.listRemoteFiles()
     }
 
-    @Throws(FileNotFoundException::class, IllegalAccessException::class)
+    @Throws(FileNotFoundException::class, UnsupportedOperationException::class)
     override fun openRemoteFile(name: String): ParcelFileDescriptor {
         return mXposedInterface.openRemoteFile(name)
     }

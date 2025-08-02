@@ -22,8 +22,35 @@ abstract class BaseXposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage 
         mModule.mClassloader = lpparam.classLoader
         mModule.mPackageName = lpparam.packageName
         mModule.mProcessName = lpparam.processName
+        initModuleStatus()
     }
 
     protected val module: XplerModuleInterface
         get() = mModule
+
+    private fun initModuleStatus() {
+        if (module.packageName != module.modulePackageName) return
+
+        try {
+            val statusClazz = module.classLoader.loadClass("io.github.xpler2.impl.XposedStatus")
+            val getApiVersion = statusClazz?.getDeclaredMethod("getApiVersion")
+            if (getApiVersion != null) {
+                module.hooker(getApiVersion) {
+                    onAfter {
+                        result = module.api
+                    }
+                }
+            }
+            val getFrameworkName = statusClazz?.getDeclaredMethod("getFrameworkName")
+            if (getFrameworkName != null) {
+                module.hooker(getFrameworkName) {
+                    onAfter {
+                        result = module.frameworkName
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            module.log("[Xpler2] Error initializing Xposed status: ${e.message}", e)
+        }
+    }
 }

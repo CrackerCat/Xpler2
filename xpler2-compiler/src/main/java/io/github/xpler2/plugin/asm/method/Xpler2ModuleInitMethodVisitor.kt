@@ -1,6 +1,7 @@
-package io.github.xpler2.plugin.asm
+package io.github.xpler2.plugin.asm.method
 
 import io.github.xpler2.plugin.compiler.bean.XplerInitializeBean
+import io.github.xpler2.plugin.compiler.bean.XplerInitializeCache
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.MethodVisitor
@@ -8,15 +9,21 @@ import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
 import java.io.File
 
-class Xpler2MethodVisitor(
+// Inject module initialization
+class Xpler2ModuleInitMethodVisitor(
     api: Int,
     methodVisitor: MethodVisitor,
     private val ownerName: String,
     private val methodMame: String,
     private val descriptor: String,
-    private val initial: XplerInitializeBean,
-    private val outputDir: String,
+    private val initializeCache: XplerInitializeCache,
+    private val applicationId: String?,
+    private val debuggable: Boolean,
 ) : MethodVisitor(api, methodVisitor) {
+
+    val initial: XplerInitializeBean
+        get() = initializeCache.initializeBean
+
     override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor? {
         val annotation = Type.getType(descriptor)
 
@@ -42,7 +49,7 @@ class Xpler2MethodVisitor(
     private fun generateXposedInitClass() {
         if (!initial.xposed) return
 
-        val className = initial.innerXposedInit.replace(".", "/")
+        val className = initial.xposedInit.replace(".", "/")
         ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS).apply {
             visit(
                 Opcodes.V17,
@@ -129,7 +136,7 @@ class Xpler2MethodVisitor(
     private fun generateLsposedInitClass() {
         if (!initial.lsposed) return
 
-        val className = initial.innerLsposedInit.replace(".", "/")
+        val className = initial.lsposedInit.replace(".", "/")
         ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS).apply {
             visit(
                 Opcodes.V17,
@@ -216,11 +223,13 @@ class Xpler2MethodVisitor(
 
     // write a bytecode file
     private fun writeGenerateClass(name: String, writer: ClassWriter) {
-        println("XplerInitialize: generated init class $name")
-        File(outputDir, "$name.class")
+        val variant = if (debuggable) "debug" else "release"
+        val intermediatesPath = initializeCache.intermediatesPath.replace("{variant}", variant)
+        File(intermediatesPath, "$name.class")
             .also {
                 it.delete()
                 it.parentFile.mkdirs()
+                println("XplerInitialize: generated init class ${it.absolutePath}")
             }
             .writeBytes(writer.toByteArray())
     }

@@ -10,12 +10,12 @@ import java.util.zip.ZipOutputStream
  * Build the LSposed project configuration
  */
 object LsposedConfig {
-    fun init(outputDirectory: Directory, config: XplerInitializeBean) {
-        generateLsposedConfig(outputDirectory, config)
+    fun init(coreDirectory: Directory, config: XplerInitializeBean) {
+        generateLsposedConfig(coreDirectory, config)
     }
 
-    private fun generateLsposedConfig(outputDirectory: Directory, config: XplerInitializeBean) {
-        val configAar = outputDirectory.asFile.resolve("core/lsposed-config.aar")
+    private fun generateLsposedConfig(coreDirectory: Directory, config: XplerInitializeBean) {
+        val configAar = coreDirectory.asFile.resolve("lsposed-config.aar")
             .also { it.parentFile.mkdirs() }
 
         if (!config.lsposed) {
@@ -90,7 +90,7 @@ object LsposedConfig {
 
     private fun generateMetaInfJavaInit(config: XplerInitializeBean): Pair<String, String> {
         val name = "META-INF/xposed/java_init.list"
-        val value = config.innerLsposedInit
+        val value = config.lsposedInit
 
         return name to value
     }

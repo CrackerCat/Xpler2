@@ -18,6 +18,6 @@ data class XplerInitializeBean(
     @EncodeDefault val lsposedMinVersion: Int = 100,
     @EncodeDefault val lsposedStaticScope: Boolean = true,
     @EncodeDefault val lsposedCompatAnnotation: Boolean = true,
-    @EncodeDefault val innerXposedInit: String = "$name\$X${Random.nextInt(0, 999)}",
-    @EncodeDefault val innerLsposedInit: String = "$name\$L${Random.nextInt(0, 999)}",
+    @EncodeDefault val xposedInit: String = "$name\$X${Random.nextInt(0, 999)}",
+    @EncodeDefault val lsposedInit: String = "$name\$L${Random.nextInt(0, 999)}",
 )

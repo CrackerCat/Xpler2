@@ -9,12 +9,12 @@ import java.util.zip.ZipOutputStream
  * Build Xposed project configuration
  */
 object XposedConfig {
-    fun init(outputDirectory: Directory, config: XplerInitializeBean) {
-        generateXposedConfig(outputDirectory, config)
+    fun init(coreDirectory: Directory, config: XplerInitializeBean) {
+        generateXposedConfig(coreDirectory, config)
     }
 
-    private fun generateXposedConfig(outputDirectory: Directory, config: XplerInitializeBean) {
-        val configAar = outputDirectory.asFile.resolve("core/xposed-config.aar")
+    private fun generateXposedConfig(coreDirectory: Directory, config: XplerInitializeBean) {
+        val configAar = coreDirectory.asFile.resolve("xposed-config.aar")
             .also { it.parentFile.mkdirs() }
 
         if (!config.xposed) {
@@ -79,7 +79,7 @@ object XposedConfig {
 
     private fun generateAssetsXposedInit(config: XplerInitializeBean): Pair<String, String> {
         val name = "assets/xposed_init"
-        val value = config.innerXposedInit
+        val value = config.xposedInit
 
         return name to value
     }

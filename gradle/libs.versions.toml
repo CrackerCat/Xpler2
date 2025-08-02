@@ -1,14 +1,15 @@
 [versions]
-agp = "8.10.1"
-kotlin = "2.1.21"
+agp = "8.11.1"
+kotlin = "2.2.0"
 coreKtx = "1.16.0"
-lifecycleRuntimeKtx = "2.9.1"
+lifecycleRuntimeKtx = "2.9.2"
 activityCompose = "1.10.1"
-composeBom = "2025.06.01"
+composeBom = "2025.07.00"
 xposed-api = "82"
 lspxposed-api = "100"
-xpler2 = "0.0.2"
-jetbrainsKotlinJvm = "2.1.21"
+lspxposed-service = "100-1.0.0"
+xpler2 = "0.0.3"
+jetbrainsKotlinJvm = "2.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -22,6 +23,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 xposed-api = { group = "de.robv.android.xposed", name = "api", version.ref = "xposed-api" }
 libxposed-api = { group = "io.github.libxposed", name = "api", version.ref = "lspxposed-api" }
+libxposed-service = { group = "io.github.libxposed", name = "service", version.ref = "lspxposed-service" }
 xpler2 = { group = "io.github.xpler2", name = "xpler2", version.ref = "xpler2" }
 
 [plugins]

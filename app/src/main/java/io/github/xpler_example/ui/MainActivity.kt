@@ -4,13 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import io.github.libxposed.service.XposedService
+import io.github.xpler2.XplerModuleStatus
 import io.github.xpler_example.ui.theme.XplerExampleTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,28 +22,25 @@ class MainActivity : ComponentActivity() {
         setContent {
             XplerExampleTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        val instance = XplerModuleStatus.getInstance()
+                        if (instance?.isActivate == true) {
+                            Text(
+                                text = "Activated. \nframeworkName: ${instance.frameworkName}, apiVersion: ${instance.apiVersion}",
+                            )
+                        } else {
+                            Text(
+                                text = "Is Not Activate.",
+                            )
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    XplerExampleTheme {
-        Greeting("Android")
     }
 }

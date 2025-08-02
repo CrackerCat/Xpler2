@@ -4,8 +4,12 @@ import com.android.build.api.instrumentation.AsmClassVisitorFactory
 import com.android.build.api.instrumentation.ClassContext
 import com.android.build.api.instrumentation.ClassData
 import com.android.build.api.instrumentation.InstrumentationParameters
-import io.github.xpler2.plugin.compiler.cache.XplerInitializeCache
+import io.github.xpler2.plugin.compiler.bean.XplerInitializeCache
+import org.gradle.api.file.Directory
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
 import java.io.File
@@ -14,11 +18,15 @@ import java.io.File
 abstract class Xpler2AsmVisitorFactory : AsmClassVisitorFactory<Xpler2AsmVisitorFactory.Params> {
 
     interface Params : InstrumentationParameters {
-        @get:Input
-        var outputDir: String
+        @get:InputDirectory
+        @get:PathSensitive(PathSensitivity.RELATIVE)
+        var cacheDirectory: Directory
 
         @get:Input
-        var initializeCacheDir: String
+        var applicationId: String?
+
+        @get:Input
+        var debuggable: Boolean
     }
 
     override fun createClassVisitor(
@@ -26,18 +34,21 @@ abstract class Xpler2AsmVisitorFactory : AsmClassVisitorFactory<Xpler2AsmVisitor
         nextClassVisitor: ClassVisitor
     ): ClassVisitor {
         val params = parameters.get()
-        val initializeCache = XplerInitializeCache.cache(params.initializeCacheDir)
+        val initializeCache = XplerInitializeCache.cache(params.cacheDirectory)
+            ?: throw NullPointerException("Xpler2 compiler cache is not found. ")
         return Xpler2ClassVisitor(
             api = Opcodes.ASM9,
             classVisitor = nextClassVisitor,
-            initial = initializeCache.initializeBean,
-            outputDir = params.outputDir,
+            initializeCache = initializeCache,
+            applicationId = params.applicationId,
+            debuggable = params.debuggable,
         )
     }
 
     override fun isInstrumentable(classData: ClassData): Boolean {
         val params = parameters.get()
-        val initializeCache = XplerInitializeCache.cache(params.initializeCacheDir)
+        val initializeCache = XplerInitializeCache.cache(params.cacheDirectory)
+            ?: throw NullPointerException("Xpler2 compiler cache is not found. ")
         val sourceName = initializeCache.sourcePath
             .replace(".java", "")
             .replace(".kt", "Kt")

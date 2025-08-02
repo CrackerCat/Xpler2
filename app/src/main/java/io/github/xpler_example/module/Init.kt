@@ -9,8 +9,9 @@ import io.github.xpler2.hooker.hooker
     name = "InitKt",
     description = "Xpler Example Module",
     scope = ["com.tencent.mm"],
+    xposed = true,
+    lsposed = true,
     lsposedCompatAnnotation = false,
-    lsposed = false,
 )
 fun init(module: XplerModuleInterface) {
     try {

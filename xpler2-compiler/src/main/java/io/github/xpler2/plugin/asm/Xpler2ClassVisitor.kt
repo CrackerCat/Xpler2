@@ -1,6 +1,10 @@
 package io.github.xpler2.plugin.asm
 
+import io.github.xpler2.plugin.asm.method.Xpler2ModuleInitMethodVisitor
+import io.github.xpler2.plugin.asm.method.Xpler2ModuleAppIdMethodVisitor
+import io.github.xpler2.plugin.asm.method.Xpler2ModuleStatusMethodVisitor
 import io.github.xpler2.plugin.compiler.bean.XplerInitializeBean
+import io.github.xpler2.plugin.compiler.bean.XplerInitializeCache
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
@@ -10,11 +14,15 @@ import org.objectweb.asm.Type
 class Xpler2ClassVisitor(
     api: Int,
     classVisitor: ClassVisitor,
-    private val initial: XplerInitializeBean,
-    private val outputDir: String,
+    private val initializeCache: XplerInitializeCache,
+    private val applicationId: String?,
+    private val debuggable: Boolean,
 ) : ClassVisitor(api, classVisitor) {
     private lateinit var mOwnerName: String
     private var mSuperName: String? = null
+
+    val initial: XplerInitializeBean
+        get() = initializeCache.initializeBean
 
     override fun visit(
         version: Int,
@@ -24,8 +32,8 @@ class Xpler2ClassVisitor(
         superName: String?,
         interfaces: Array<out String?>?
     ) {
-        mOwnerName = name
-        mSuperName = superName
+        mOwnerName = name.replace('/', '.')
+        mSuperName = superName?.replace('/', '.')
         super.visit(version, access, name, signature, superName, interfaces)
     }
 
@@ -48,40 +56,80 @@ class Xpler2ClassVisitor(
         signature: String?,
         exceptions: Array<out String?>?
     ): MethodVisitor? {
-        // skip methods that are not `public static`.
-        if ((access and Opcodes.ACC_PUBLIC) == 0 || (access and Opcodes.ACC_STATIC) == 0) {
-            return super.visitMethod(access, name, descriptor, signature, exceptions)
-        }
-
-        // skip methods that are not single parameter.
+        // if only one parameter, check if it is a XplerModuleInterface or XposedInterface.BeforeHookCallback or XposedInterface.AfterHookCallback
+        val isPublicStatic = Opcodes.ACC_PUBLIC and access != 0 && Opcodes.ACC_STATIC and access != 0
         val argumentTypes = Type.getArgumentTypes(descriptor)
-        if (argumentTypes.size != 1) {
-            return super.visitMethod(access, name, descriptor, signature, exceptions)
-        }
-
-        // skipping single parameter type is not `XplerModuleInterface` or `XposedInterface$BeforeHookCallback` or `XposedInterface$AfterHookCallback` method
-        val singleParam = argumentTypes.single()
-        if (singleParam.className != "io.github.xpler2.XplerModuleInterface"
-            && singleParam.className != "io.github.libxposed.api.XposedInterface\$BeforeHookCallback"
-            && singleParam.className != "io.github.libxposed.api.XposedInterface\$AfterHookCallback"
+        val singleParam = argumentTypes.singleOrNull()
+        if (isPublicStatic
+            && (singleParam?.className == "io.github.xpler2.XplerModuleInterface"
+                    || singleParam?.className == "io.github.libxposed.api.XposedInterface\$BeforeHookCallback"
+                    || singleParam?.className == "io.github.libxposed.api.XposedInterface\$AfterHookCallback")
         ) {
-            return super.visitMethod(access, name, descriptor, signature, exceptions) // 只处理 XplerModuleInterface 参数
+            return Xpler2ModuleInitMethodVisitor(
+                api = api,
+                methodVisitor = super.visitMethod(
+                    access,
+                    name,
+                    descriptor,
+                    signature,
+                    exceptions
+                ),
+                ownerName = mOwnerName,
+                methodMame = name,
+                descriptor = descriptor,
+                initializeCache = initializeCache,
+                applicationId = applicationId,
+                debuggable = debuggable,
+            )
         }
 
-        return Xpler2MethodVisitor(
-            api = api,
-            methodVisitor = super.visitMethod(
-                access,
-                name,
-                descriptor,
-                signature,
-                exceptions
-            ),
-            ownerName = mOwnerName,
-            methodMame = name,
-            descriptor = descriptor,
-            initial = initial,
-            outputDir = outputDir,
-        )
+        // if the method is `getModulePackageName` and the owner is `XposedM` or `LsposedM`, handle it.
+        if (name == "getModulePackageName"
+            && (mOwnerName == "io.github.xpler2.impl.XposedM"
+                    || mOwnerName == "io.github.xpler2.impl.LsposedM")
+        ) {
+            return Xpler2ModuleAppIdMethodVisitor(
+                api = api,
+                methodVisitor = super.visitMethod(
+                    access,
+                    name,
+                    descriptor,
+                    signature,
+                    exceptions
+                ),
+                ownerName = mOwnerName,
+                methodMame = name,
+                descriptor = descriptor,
+                initializeCache = initializeCache,
+                applicationId = applicationId,
+                debuggable = debuggable,
+            )
+        }
+
+        // if the return type is `XplerModuleStatus`, check if the method is `getInstance`.
+        val returnType = Type.getReturnType(descriptor)
+        if (name == "getInstance"
+            && mOwnerName == "io.github.xpler2.XplerModuleStatus\$Companion"
+            && returnType.className == "io.github.xpler2.XplerModuleStatus"
+        ) {
+            return Xpler2ModuleStatusMethodVisitor(
+                api = api,
+                methodVisitor = super.visitMethod(
+                    access,
+                    name,
+                    descriptor,
+                    signature,
+                    exceptions
+                ),
+                ownerName = mOwnerName,
+                methodMame = name,
+                descriptor = descriptor,
+                initializeCache = initializeCache,
+                applicationId = applicationId,
+                debuggable = debuggable,
+            )
+        }
+
+        return super.visitMethod(access, name, descriptor, signature, exceptions)
     }
 }

@@ -63,10 +63,10 @@ interface XplerModuleInterface {
      *     log("onBefore:$this")
      *   }
      *   override fun onAfter(callback: AfterParams.() -> Unit) {
-     *     log("onBefore:$this")
+     *     log("onAfter:$this")
      *   }
      *   override fun onUnhook(callback: UnhookParams.() -> Unit) {
-     *     log("onBefore:$this")
+     *     log("onUnhook:$this")
      *   }
      * }
      *
@@ -121,10 +121,10 @@ interface XplerModuleInterface {
      *     log("onBefore:$this")
      *   }
      *   override fun onAfter(callback: AfterParams.() -> Unit) {
-     *     log("onBefore:$this")
+     *     log("onAfter:$this")
      *   }
      *   override fun onUnhook(callback: UnhookParams.() -> Unit) {
-     *     log("onBefore:$this")
+     *     log("onUnhook:$this")
      *   }
      * }
      *
@@ -158,6 +158,8 @@ interface XplerModuleInterface {
     val packageName: String
 
     val processName: String
+
+    val modulePackageName: String?
 
     val modulePath: String?
 

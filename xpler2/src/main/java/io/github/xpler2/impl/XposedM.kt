@@ -152,6 +152,9 @@ internal class XposedM(
     override val processName: String
         get() = mProcessName
 
+    override val modulePackageName: String?
+        get() = null // ASM bytecode injection will be implemented by the xpler2-compiler plugin.
+
     override val modulePath: String?
         get() = mStartupParam.modulePath
 
@@ -169,7 +172,7 @@ internal class XposedM(
     }
 
     @Throws(
-        IllegalAccessException::class,
+        UnsupportedOperationException::class,
         IllegalArgumentException::class,
         InvocationTargetException::class,
     )
@@ -187,7 +190,7 @@ internal class XposedM(
     }
 
     @Throws(
-        IllegalAccessException::class,
+        UnsupportedOperationException::class,
         IllegalArgumentException::class,
         InvocationTargetException::class,
     )
@@ -205,20 +208,21 @@ internal class XposedM(
         return Resources(assets, resources.displayMetrics, resources.configuration)
     }
 
-    @Throws(IllegalAccessException::class)
+    @Throws(UnsupportedOperationException::class)
     override fun deoptimize(method: Method): Boolean {
-        throw IllegalAccessException("current xposed api does not support `deoptimize`")
+        throw UnsupportedOperationException("current xposed api does not support `deoptimize`")
     }
 
-    @Throws(IllegalAccessException::class)
+    @Throws(UnsupportedOperationException::class)
     override fun <T> deoptimize(constructor: Constructor<T>): Boolean {
-        throw IllegalAccessException("current xposed api does not support `deoptimize`")
+        throw UnsupportedOperationException("current xposed api does not support `deoptimize`")
     }
 
     @Throws(
         InvocationTargetException::class,
         IllegalArgumentException::class,
         IllegalAccessException::class,
+        UnsupportedOperationException::class,
     )
     override fun invokeOrigin(method: Method, instance: Any, vararg args: Any?): Any? {
         return XposedBridge.invokeOriginalMethod(method, instance, args)
@@ -228,6 +232,7 @@ internal class XposedM(
         InvocationTargetException::class,
         IllegalArgumentException::class,
         IllegalAccessException::class,
+        UnsupportedOperationException::class,
     )
     override fun <T> invokeOrigin(constructor: Constructor<T>, instance: T, vararg args: Any?) {
         XposedBridge.invokeOriginalMethod(constructor, instance, args)
@@ -237,57 +242,61 @@ internal class XposedM(
         InvocationTargetException::class,
         IllegalArgumentException::class,
         IllegalAccessException::class,
+        UnsupportedOperationException::class,
     )
     override fun invokeSpecial(method: Method, instance: Any, vararg args: Any?): Any? {
-        throw IllegalAccessException("current xposed api does not support `invokeSpecial`")
+        throw UnsupportedOperationException("current xposed api does not support `invokeSpecial`")
     }
 
     @Throws(
         InvocationTargetException::class,
         IllegalArgumentException::class,
         IllegalAccessException::class,
+        UnsupportedOperationException::class,
     )
     override fun <T> invokeSpecial(method: Constructor<T>, instance: T, vararg args: Any?) {
-        throw IllegalAccessException("current xposed api does not support `invokeSpecial`")
+        throw UnsupportedOperationException("current xposed api does not support `invokeSpecial`")
     }
 
     @Throws(
         InvocationTargetException::class,
-        java.lang.IllegalArgumentException::class,
+        IllegalArgumentException::class,
         IllegalAccessException::class,
         InstantiationException::class,
+        UnsupportedOperationException::class,
     )
     override fun <T> newInstanceOrigin(constructor: Constructor<T>, vararg args: Any): T {
-        throw IllegalAccessException("current xposed api does not support `newInstanceOrigin`")
+        throw UnsupportedOperationException("current xposed api does not support `newInstanceOrigin`")
     }
 
     @Throws(
         InvocationTargetException::class,
-        java.lang.IllegalArgumentException::class,
+        IllegalArgumentException::class,
         IllegalAccessException::class,
         InstantiationException::class,
+        UnsupportedOperationException::class,
     )
     override fun <T, U> newInstanceSpecial(
         constructor: Constructor<T>,
         subClass: Class<U>,
         vararg args: Any
     ): U {
-        throw IllegalAccessException("current xposed api does not support `newInstanceSpecial`")
+        throw UnsupportedOperationException("current xposed api does not support `newInstanceSpecial`")
     }
 
-    @Throws(IllegalAccessException::class)
+    @Throws(UnsupportedOperationException::class)
     override fun getRemotePreferences(group: String): SharedPreferences {
-        throw IllegalAccessException("current xposed api does not support `getRemotePreferences`")
+        throw UnsupportedOperationException("current xposed api does not support `getRemotePreferences`")
     }
 
-    @Throws(IllegalAccessException::class)
+    @Throws(UnsupportedOperationException::class)
     override fun listRemoteFiles(): Array<String> {
-        throw IllegalAccessException("current xposed api does not support `listRemoteFiles`")
+        throw UnsupportedOperationException("current xposed api does not support `listRemoteFiles`")
     }
 
-    @Throws(FileNotFoundException::class, IllegalAccessException::class)
+    @Throws(FileNotFoundException::class, UnsupportedOperationException::class)
     override fun openRemoteFile(name: String): ParcelFileDescriptor {
-        throw IllegalAccessException("current xposed api does not support `openRemoteFile`")
+        throw UnsupportedOperationException("current xposed api does not support `openRemoteFile`")
     }
 
     override fun log(message: String, throwable: Throwable?) {

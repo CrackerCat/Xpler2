@@ -100,6 +100,12 @@
     set*(...);
     logger(...);
 }
+-keep class io.github.xpler2.XplerModuleStatus {
+    *;
+}
+-keep class ** implements io.github.xpler2.XplerModuleStatus {
+    *;
+}
 -keep,allowobfuscation class io.github.xpler2.XplerLogger {
     logger(...);
 }
