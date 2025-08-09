@@ -11,7 +11,31 @@ import java.util.zip.ZipOutputStream
  */
 object LsposedConfig {
     fun init(coreDirectory: Directory, config: XplerInitializeBean) {
+        exportLsposedLibs(coreDirectory, config)
         generateLsposedConfig(coreDirectory, config)
+    }
+
+    private fun exportLsposedLibs(coreDirectory: Directory, config: XplerInitializeBean) {
+        val serviceName = "service-100-1.0.0.aar"
+        val exportServiceAar = coreDirectory.file(serviceName).asFile
+            .also { it.parentFile.mkdirs() }
+
+        val interfaceName = "interface-100.aar"
+        val exportInterfaceAar = coreDirectory.file(interfaceName).asFile
+            .also { it.parentFile.mkdirs() }
+
+        if (!config.lsposed) {
+            exportServiceAar.delete()
+            exportInterfaceAar.delete()
+        } else {
+            // lsposed service
+            val serviceAar = LsposedConfig::class.java.getResourceAsStream("/libxposed/$serviceName")
+            exportServiceAar.outputStream().use { out -> serviceAar?.copyTo(out) }
+
+            // lsposed interface
+            val interfaceAar = LsposedConfig::class.java.getResourceAsStream("/libxposed/$interfaceName")
+            exportInterfaceAar.outputStream().use { out -> interfaceAar?.copyTo(out) }
+        }
     }
 
     private fun generateLsposedConfig(coreDirectory: Directory, config: XplerInitializeBean) {

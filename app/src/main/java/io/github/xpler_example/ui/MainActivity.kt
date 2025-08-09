@@ -11,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.github.libxposed.service.XposedService
 import io.github.xpler2.XplerModuleStatus
 import io.github.xpler_example.ui.theme.XplerExampleTheme
 
@@ -31,7 +30,8 @@ class MainActivity : ComponentActivity() {
                         val instance = XplerModuleStatus.getInstance()
                         if (instance?.isActivate == true) {
                             Text(
-                                text = "Activated. \nframeworkName: ${instance.frameworkName}, apiVersion: ${instance.apiVersion}",
+                                text = "Activated. " +
+                                        "\nframeworkName: ${instance.frameworkName}, apiVersion: ${instance.apiVersion}"
                             )
                         } else {
                             Text(

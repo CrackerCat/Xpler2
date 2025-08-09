@@ -1,13 +1,10 @@
 package io.github.xpler2.impl
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PackageInfoFlags
-import android.content.res.AssetManager
-import android.content.res.Resources
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.util.Log
@@ -169,43 +166,6 @@ internal class XposedM(
                 PackageManager.GET_ACTIVITIES
             )
         }
-    }
-
-    @Throws(
-        UnsupportedOperationException::class,
-        IllegalArgumentException::class,
-        InvocationTargetException::class,
-    )
-    @SuppressLint("DiscouragedPrivateApi", "PrivateApi")
-    @SuppressWarnings("deprecation")
-    override fun injectResource(resources: Resources?) {
-        if (resources == null || modulePath == null)
-            throw IllegalArgumentException("context or modulePath is null")
-
-        val method = AssetManager::class.java.getDeclaredMethod("addAssetPath", String::class.java)
-            .also { it.isAccessible = true }
-
-        val assets = resources.assets ?: return
-        method.invoke(assets, modulePath) // 添加插件资源
-    }
-
-    @Throws(
-        UnsupportedOperationException::class,
-        IllegalArgumentException::class,
-        InvocationTargetException::class,
-    )
-    @SuppressLint("DiscouragedPrivateApi", "PrivateApi")
-    @SuppressWarnings("deprecation")
-    override fun resourcesWrapper(resources: Resources?): Resources? {
-        if (resources == null || modulePath == null)
-            throw IllegalArgumentException("resources or modulePath is null")
-
-        val method = AssetManager::class.java.getDeclaredMethod("addAssetPath", String::class.java)
-            .also { it.isAccessible = true }
-
-        val assets = resources.assets ?: return null
-        method.invoke(assets, modulePath) as? Int ?: -1 // 添加插件资源
-        return Resources(assets, resources.displayMetrics, resources.configuration)
     }
 
     @Throws(UnsupportedOperationException::class)

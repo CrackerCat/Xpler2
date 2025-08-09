@@ -130,6 +130,10 @@
 -dontwarn io.github.libxposed.api.annotations.AfterInvocation
 -dontwarn io.github.libxposed.api.annotations.BeforeInvocation
 -dontwarn io.github.libxposed.api.annotations.XposedHooker
+-dontwarn io.github.libxposed.service.XposedService$OnScopeEventListener
+-dontwarn io.github.libxposed.service.XposedService
+-dontwarn io.github.libxposed.service.XposedServiceHelper$OnServiceListener
+-dontwarn io.github.libxposed.service.XposedServiceHelper
 
 ## 以下是备注说明，避免忘记
 # -keepclassmembers 允许混淆类名，但是允许保留成员名不被混淆(简单来说就是被保留的类成员名不被混淆，类名可以被混淆)

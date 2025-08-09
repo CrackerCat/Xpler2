@@ -8,7 +8,7 @@ composeBom = "2025.07.00"
 xposed-api = "82"
 lspxposed-api = "100"
 lspxposed-service = "100-1.0.0"
-xpler2 = "0.0.3"
+xpler2 = "0.0.4-alpha"
 jetbrainsKotlinJvm = "2.2.0"
 
 [libraries]

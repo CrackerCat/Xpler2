@@ -37,15 +37,6 @@ class Xpler2CompilerPlugin : Plugin<Project> {
             .dir("intermediates/classes/{variant}/transform{variant}ClassesWithAsm/dirs")
             .get()
 
-        // lsposed service
-        val serviceName = "service-100-1.0.0.aar"
-        val serviceAar = Xpler2CompilerPlugin::class.java.getResourceAsStream("/libxposed/$serviceName")
-        serviceAar?.copyTo(coreDirectory.file(serviceName).asFile.outputStream())
-
-        val interfaceName = "interface-100.aar"
-        val interfaceAar = Xpler2CompilerPlugin::class.java.getResourceAsStream("/libxposed/$interfaceName")
-        interfaceAar?.copyTo(coreDirectory.file(interfaceName).asFile.outputStream())
-
         // compiler task
         val sourceFiles = target.fileTree("src/main") { configTree ->
             configTree.include("**/*.kt", "**/*.java")

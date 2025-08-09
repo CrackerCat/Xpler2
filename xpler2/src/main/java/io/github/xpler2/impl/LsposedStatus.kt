@@ -37,12 +37,10 @@ object LsposedStatus : XplerModuleStatus {
     override val scope
         get() = mXposedService?.scope ?: emptyList()
 
-    @Throws(UnsupportedOperationException::class)
     override fun removeScope(packageName: String): String? {
         return mXposedService?.removeScope(packageName)
     }
 
-    @Throws(UnsupportedOperationException::class)
     override fun requestScope(packageName: String) {
         mXposedService?.requestScope(packageName, object : XposedService.OnScopeEventListener {
             override fun onScopeRequestPrompted(packageName: String) {
@@ -67,27 +65,22 @@ object LsposedStatus : XplerModuleStatus {
         })
     }
 
-    @Throws(UnsupportedOperationException::class)
     override fun getRemotePreferences(group: String) {
         mXposedService?.getRemotePreferences(group)
     }
 
-    @Throws(UnsupportedOperationException::class)
     override fun deleteRemotePreferences(group: String) {
         mXposedService?.deleteRemotePreferences(group)
     }
 
-    @Throws(UnsupportedOperationException::class)
     override fun listRemoteFiles(): Array<String> {
         return mXposedService?.listRemoteFiles() ?: emptyArray()
     }
 
-    @Throws(UnsupportedOperationException::class)
     override fun openRemoteFile(name: String) {
         mXposedService?.openRemoteFile(name)
     }
 
-    @Throws(UnsupportedOperationException::class)
     override fun deleteRemoteFile(name: String) {
         mXposedService?.deleteRemoteFile(name)
     }

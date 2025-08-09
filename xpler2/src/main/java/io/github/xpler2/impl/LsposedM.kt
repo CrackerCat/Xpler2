@@ -1,13 +1,10 @@
 package io.github.xpler2.impl
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PackageInfoFlags
-import android.content.res.AssetManager
-import android.content.res.Resources
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.util.Log
@@ -172,47 +169,10 @@ internal class LsposedM(
         }
     }
 
-    @Throws(
-        IllegalArgumentException::class,
-        InvocationTargetException::class,
-    )
-    @SuppressLint("DiscouragedPrivateApi", "PrivateApi")
-    @SuppressWarnings("deprecation")
-    override fun injectResource(resources: Resources?) {
-        if (resources == null || modulePath == null)
-            throw IllegalArgumentException("resources or modulePath is null")
-
-        val method = AssetManager::class.java.getDeclaredMethod("addAssetPath", String::class.java)
-            .also { it.isAccessible = true }
-
-        val assets = resources.assets ?: return
-        method.invoke(assets, modulePath) // add plugin resources
-    }
-
-    @Throws(
-        IllegalArgumentException::class,
-        InvocationTargetException::class,
-    )
-    @SuppressLint("DiscouragedPrivateApi", "PrivateApi")
-    @SuppressWarnings("deprecation")
-    override fun resourcesWrapper(resources: Resources?): Resources? {
-        if (resources == null || modulePath == null)
-            throw IllegalArgumentException("resources or modulePath is null")
-
-        val method = AssetManager::class.java.getDeclaredMethod("addAssetPath", String::class.java)
-            .also { it.isAccessible = true }
-
-        val assets = resources.assets ?: return null
-        method.invoke(assets, modulePath) as? Int ?: -1 // add plugin resources
-        return Resources(assets, resources.displayMetrics, resources.configuration)
-    }
-
-    @Throws(UnsupportedOperationException::class)
     override fun deoptimize(method: Method): Boolean {
         return mXposedInterface.deoptimize(method)
     }
 
-    @Throws(UnsupportedOperationException::class)
     override fun <T> deoptimize(constructor: Constructor<T>): Boolean {
         return mXposedInterface.deoptimize(constructor)
     }
@@ -221,7 +181,6 @@ internal class LsposedM(
         InvocationTargetException::class,
         IllegalArgumentException::class,
         IllegalAccessException::class,
-        UnsupportedOperationException::class,
     )
     override fun invokeOrigin(method: Method, instance: Any, vararg args: Any?): Any? {
         return mXposedInterface.invokeOrigin(method, instance, *args)
@@ -231,7 +190,6 @@ internal class LsposedM(
         InvocationTargetException::class,
         IllegalArgumentException::class,
         IllegalAccessException::class,
-        UnsupportedOperationException::class,
     )
     override fun <T> invokeOrigin(constructor: Constructor<T>, instance: T, vararg args: Any?) {
         instance ?: throw IllegalArgumentException("instance is null")
@@ -242,7 +200,6 @@ internal class LsposedM(
         InvocationTargetException::class,
         IllegalArgumentException::class,
         IllegalAccessException::class,
-        UnsupportedOperationException::class,
     )
     override fun invokeSpecial(method: Method, instance: Any, vararg args: Any?): Any? {
         return mXposedInterface.invokeSpecial(method, instance, *args)
@@ -252,7 +209,6 @@ internal class LsposedM(
         InvocationTargetException::class,
         IllegalArgumentException::class,
         IllegalAccessException::class,
-        UnsupportedOperationException::class,
     )
     override fun <T> invokeSpecial(method: Constructor<T>, instance: T, vararg args: Any?) {
         instance ?: throw IllegalArgumentException("instance is null")
@@ -264,7 +220,6 @@ internal class LsposedM(
         IllegalArgumentException::class,
         IllegalAccessException::class,
         InstantiationException::class,
-        UnsupportedOperationException::class,
     )
     override fun <T> newInstanceOrigin(constructor: Constructor<T>, vararg args: Any): T {
         return mXposedInterface.newInstanceOrigin(constructor, *args)
@@ -275,7 +230,6 @@ internal class LsposedM(
         IllegalArgumentException::class,
         IllegalAccessException::class,
         InstantiationException::class,
-        UnsupportedOperationException::class,
     )
     override fun <T, U> newInstanceSpecial(
         constructor: Constructor<T>,
@@ -285,17 +239,15 @@ internal class LsposedM(
         return mXposedInterface.newInstanceSpecial(constructor, subClass, *args)
     }
 
-    @Throws(UnsupportedOperationException::class)
     override fun getRemotePreferences(group: String): SharedPreferences {
         return mXposedInterface.getRemotePreferences(group)
     }
 
-    @Throws(UnsupportedOperationException::class)
     override fun listRemoteFiles(): Array<String> {
         return mXposedInterface.listRemoteFiles()
     }
 
-    @Throws(FileNotFoundException::class, UnsupportedOperationException::class)
+    @Throws(FileNotFoundException::class)
     override fun openRemoteFile(name: String): ParcelFileDescriptor {
         return mXposedInterface.openRemoteFile(name)
     }

@@ -165,23 +165,6 @@ interface XplerModuleInterface {
 
     fun modulePackageInfo(context: Context): PackageInfo?
 
-    /**
-     * Inject host plugin resources.
-     * make sure to call before `onCreate`.
-     *
-     * @param resources Context
-     */
-    fun injectResource(resources: Resources?)
-
-    /**
-     * Inject host plugin resources.
-     * make sure to call after `onCreate`.
-     *
-     * @param resources Resources
-     * @return Resources
-     */
-    fun resourcesWrapper(resources: Resources?): Resources?
-
     fun deoptimize(method: Method): Boolean
 
     fun <T> deoptimize(constructor: Constructor<T>): Boolean
