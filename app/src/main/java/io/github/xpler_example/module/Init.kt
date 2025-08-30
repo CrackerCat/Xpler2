@@ -27,10 +27,14 @@ fun init(module: XplerModuleInterface) {
         onCreateMethod.hooker {
             onBefore {
                 module.log("[Xpler2]Kotlin-> onCreate called in TinkerApplication: $this")
+                module.log("[Xpler2]Kotlin-> before unhooks: ${module.unhooks}")
+                unhook?.unhook()
+                module.log("[Xpler2]Kotlin-> unhook TinkerApplication onCreate.")
             }
 
             onAfter {
                 module.log("[Xpler2]Kotlin-> TinkerApplication onCreate finished.")
+                module.log("[Xpler2]Kotlin-> after all unhooks: ${module.unhooks}")
             }
         }
     } catch (e: Throwable) {

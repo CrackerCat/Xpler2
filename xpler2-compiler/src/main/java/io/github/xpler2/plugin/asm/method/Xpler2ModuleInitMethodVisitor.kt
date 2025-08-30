@@ -7,7 +7,6 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
-import java.io.File
 
 // Inject module initialization
 class Xpler2ModuleInitMethodVisitor(
@@ -18,7 +17,7 @@ class Xpler2ModuleInitMethodVisitor(
     private val descriptor: String,
     private val initializeCache: XplerInitializeCache,
     private val applicationId: String?,
-    private val debuggable: Boolean,
+    private val variant: String,
 ) : MethodVisitor(api, methodVisitor) {
 
     val initial: XplerInitializeBean
@@ -223,9 +222,8 @@ class Xpler2ModuleInitMethodVisitor(
 
     // write a bytecode file
     private fun writeGenerateClass(name: String, writer: ClassWriter) {
-        val variant = if (debuggable) "debug" else "release"
-        val intermediatesPath = initializeCache.intermediatesPath.replace("{variant}", variant)
-        File(intermediatesPath, "$name.class")
+        initializeCache.intermediatesFile(variant)
+            .resolve("$name.class")
             .also {
                 it.delete()
                 it.parentFile.mkdirs()

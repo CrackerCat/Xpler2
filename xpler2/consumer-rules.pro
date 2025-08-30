@@ -39,16 +39,16 @@
 -keep,allowobfuscation class io.github.xpler2.callback.HookerCallback { *; }
 -keep,allowobfuscation class io.github.xpler2.callback.HookerCallback {
     getModule();
+    getUnhook(...);
     onBefore(...);
     onAfter(...);
-    onUnhook(...);
 }
 -keep,allowobfuscation interface io.github.xpler2.callback.HookerFunction { *; }
 -keep,allowobfuscation class ** implements io.github.xpler2.callback.HookerFunction {
     getModule();
+    getUnhook(...);
     onBefore(...);
     onAfter(...);
-    onUnhook(...);
 }
 -keep,allowobfuscation class io.github.xpler2.hooker.HookerExtKt {
     hooker*(...);

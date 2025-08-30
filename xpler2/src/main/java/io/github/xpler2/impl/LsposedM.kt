@@ -29,6 +29,7 @@ internal class LsposedM(
     lateinit var mClassloader: ClassLoader
     lateinit var mPackageName: String
     lateinit var mProcessName: String
+    private val mUnhooks by lazy { mutableListOf<UnhookParams>() }
 
     private fun <T : Member> buildLsposedHookerCallbackImpl(
         method: T,
@@ -45,14 +46,13 @@ internal class LsposedM(
             else -> throw IllegalArgumentException("Unsupported member type: ${method.javaClass.name}")
         }
 
-        var unhookParams: UnhookParams? = null
-        impl.unhookParamsInner?.invoke(
-            UnhookParams(
-                mOrigin = { unhookOriginal.origin },
-                mUnhook = { unhookOriginal.unhook() },
-            ).also { unhookParams = it }
-        )
-        return unhookParams
+        return UnhookParams(
+            mOrigin = { unhookOriginal.origin },
+            mUnhook = { unhookOriginal.unhook() },
+        ).also {
+            impl.unhookParamsInner = it
+            mUnhooks.add(it)
+        }
     }
 
     override fun hooker(
@@ -71,9 +71,9 @@ internal class LsposedM(
         callback: HookerCallback
     ): UnhookParams? {
         return hooker(method) {
+            callback.unhookParamsInner = { this.unhook }
             onBefore { callback.onBefore(this) }
             onAfter { callback.onAfter(this) }
-            onUnhook { callback.onUnhook(this) }
         }
     }
 
@@ -83,9 +83,9 @@ internal class LsposedM(
         callback: HookerCallback
     ): UnhookParams? {
         return hooker(method, priority) {
+            callback.unhookParamsInner = { this.unhook }
             onBefore { callback.onBefore(this) }
             onAfter { callback.onAfter(this) }
-            onUnhook { callback.onUnhook(this) }
         }
     }
 
@@ -105,9 +105,9 @@ internal class LsposedM(
         callback: HookerCallback
     ): UnhookParams? {
         return hooker(constructor) {
+            callback.unhookParamsInner = { this.unhook }
             onBefore { callback.onBefore(this) }
             onAfter { callback.onAfter(this) }
-            onUnhook { callback.onUnhook(this) }
         }
     }
 
@@ -117,11 +117,14 @@ internal class LsposedM(
         callback: HookerCallback
     ): UnhookParams? {
         return hooker(constructor, priority) {
+            callback.unhookParamsInner = { this.unhook }
             onBefore { callback.onBefore(this) }
             onAfter { callback.onAfter(this) }
-            onUnhook { callback.onUnhook(this) }
         }
     }
+
+    override val unhooks: List<UnhookParams>
+        get() = mUnhooks
 
     override val api: Int
         get() {
@@ -129,6 +132,7 @@ internal class LsposedM(
             declaredField.isAccessible = true
             return declaredField.getInt(null)
         }
+
     override val frameworkName: String
         get() = mXposedInterface.frameworkName
 

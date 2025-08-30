@@ -3,7 +3,6 @@ package io.github.xpler2
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageInfo
-import android.content.res.Resources
 import android.os.ParcelFileDescriptor
 import io.github.xpler2.callback.HookerCallback
 import io.github.xpler2.callback.HookerFunction
@@ -36,9 +35,6 @@ interface XplerModuleInterface {
      *   onAfter {
      *     log("onAfter:$this")
      *   }
-     *   onUnhook {
-     *     log("onUnhook:$this")
-     *   }
      * }
      * ```
      * @param method method
@@ -59,14 +55,11 @@ interface XplerModuleInterface {
      * Hook method
      * ```
      * class MyHooker : HookerCallback() {
-     *   override fun onBefore(callback: BeforeParams.() -> Unit) {
-     *     log("onBefore:$this")
+     *   override fun onBefore(params: BeforeParams) {
+     *     log("onBefore:params")
      *   }
-     *   override fun onAfter(callback: AfterParams.() -> Unit) {
-     *     log("onAfter:$this")
-     *   }
-     *   override fun onUnhook(callback: UnhookParams.() -> Unit) {
-     *     log("onUnhook:$this")
+     *   override fun onAfter(params: AfterParams) {
+     *     log("onAfter:params")
      *   }
      * }
      *
@@ -94,9 +87,6 @@ interface XplerModuleInterface {
      *   onAfter {
      *     log("onAfter:$this")
      *   }
-     *   onUnhook {
-     *     log("onUnhook:$this")
-     *   }
      * }
      * ```
      * @param method constructor
@@ -123,9 +113,6 @@ interface XplerModuleInterface {
      *   override fun onAfter(callback: AfterParams.() -> Unit) {
      *     log("onAfter:$this")
      *   }
-     *   override fun onUnhook(callback: UnhookParams.() -> Unit) {
-     *     log("onUnhook:$this")
-     *   }
      * }
      *
      * hooker(Application::class.java.getConstructor(), MyHooker())
@@ -141,6 +128,11 @@ interface XplerModuleInterface {
         priority: Int,
         callback: HookerCallback,
     ): UnhookParams?
+
+    /**
+     * Get all unhook
+     */
+    val unhooks: List<UnhookParams>
 
     /// wrapper
     val api: Int

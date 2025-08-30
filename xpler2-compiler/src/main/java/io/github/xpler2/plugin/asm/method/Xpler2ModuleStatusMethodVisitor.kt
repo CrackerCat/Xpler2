@@ -14,7 +14,7 @@ class Xpler2ModuleStatusMethodVisitor(
     private val descriptor: String,
     private val initializeCache: XplerInitializeCache,
     private val applicationId: String?,
-    private val debuggable: Boolean,
+    private val variant: String,
 ) : MethodVisitor(api, methodVisitor) {
 
     val initial: XplerInitializeBean

@@ -8,9 +8,10 @@ import io.github.xpler2.params.UnhookParams
 interface HookerFunction {
     val module: XplerModuleInterface
 
+    val unhook: UnhookParams?
+
     fun onBefore(params: BeforeParams.() -> Unit)
 
     fun onAfter(params: AfterParams.() -> Unit)
 
-    fun onUnhook(params: UnhookParams.() -> Unit)
 }

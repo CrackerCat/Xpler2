@@ -13,13 +13,10 @@ import java.lang.reflect.Modifier
  * ```
  * class MyHooker : HookerCallback() {
  *   override fun onBefore(params: BeforeParams) {
- *     log("onBefore:params")
+ *     log("onBefore:$params")
  *   }
  *   override fun onAfter(params: AfterParams) {
- *     log("onAfter:params")
- *   }
- *   override fun onUnhook(params: UnhookParams) {
- *     log("onUnhook:params")
+ *     log("onAfter:$params")
  *   }
  * }
  *
@@ -45,9 +42,6 @@ fun Method.hooker(priority: Int, callback: HookerCallback): UnhookParams? {
  *    onAfter {
  *      log("onAfter:$this")
  *    }
- *    onUnhook {
- *      log("onUnhook:$this")
- *    }
  * }
  * ```
  * @param callback callback
@@ -65,13 +59,10 @@ fun Method.hooker(priority: Int, callback: HookerFunction.() -> Unit): UnhookPar
  * ```
  * class MyHooker : HookerCallback() {
  *   override fun onBefore(params: BeforeParams) {
- *     log("onBefore:params")
+ *     log("onBefore:$params")
  *   }
  *   override fun onAfter(params: AfterParams) {
- *     log("onAfter:params")
- *   }
- *   override fun onUnhook(params: UnhookParams) {
- *     log("onUnhook:params")
+ *     log("onAfter:$params")
  *   }
  * }
  *
@@ -97,9 +88,6 @@ fun Constructor<*>.hooker(priority: Int, callback: HookerCallback): UnhookParams
  *    onAfter {
  *      log("onAfter:$this")
  *    }
- *    onUnhook {
- *      log("onUnhook:$this")
- *    }
  * }
  * ```
  * @param callback callback
@@ -122,9 +110,6 @@ fun Constructor<*>.hooker(priority: Int, callback: HookerFunction.() -> Unit): U
  *   onAfter {
  *     log("onAfter:$this")
  *   }
- *   onUnhook {
- *     log("onUnhook:$this")
- *   }
  * }
  * ```
  * @param callback callback
@@ -146,9 +131,6 @@ fun Class<*>.hookerMethodAll(callback: HookerFunction.() -> Unit): List<UnhookPa
  *   }
  *   onAfter {
  *     log("onAfter:$this")
- *   }
- *   onUnhook {
- *     log("onUnhook:$this")
  *   }
  * }
  * ```

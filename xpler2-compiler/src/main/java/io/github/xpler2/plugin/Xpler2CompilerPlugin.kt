@@ -8,12 +8,26 @@ import io.github.xpler2.plugin.asm.Xpler2AsmVisitorFactory
 import io.github.xpler2.plugin.compiler.task.Xpler2CompilerTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileTree
+import org.gradle.api.file.Directory
+
+fun String.variantFormat(variant: String): String {
+    return this
+        .replace("{variant}", variant.lowercase())
+        .replace("{Variant}", variant.replaceFirstChar { it.uppercase() })
+}
 
 // `.aar` file structure reference: https://developer.android.com/studio/projects/android-library?hl=zh-cn#aar-contents
 class Xpler2CompilerPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         if (!target.plugins.hasPlugin(AppPlugin::class.java))
             throw RuntimeException("`xpler2-compiler` is only allowed to be applied in the Application module.")
+
+        // compiler task
+        val sourceFiles = target.fileTree("src/main") { configTree ->
+            configTree.include("**/*.kt", "**/*.java")
+            configTree.exclude("**/build/**", "**/generated/**")
+        }
 
         // compiler output directory
         val compilerOutputDirectory = target.layout
@@ -31,19 +45,49 @@ class Xpler2CompilerPlugin : Plugin<Project> {
             .dir("cache")
             .also { it.asFile.mkdirs() }
 
-        // debug directory
+        // intermediates directory
         val intermediatesDirectory = target.layout
             .buildDirectory
-            .dir("intermediates/classes/{variant}/transform{variant}ClassesWithAsm/dirs")
+            .dir("intermediates/classes/{variant}/transform{Variant}ClassesWithAsm/dirs")
             .get()
 
-        // compiler task
-        val sourceFiles = target.fileTree("src/main") { configTree ->
-            configTree.include("**/*.kt", "**/*.java")
-            configTree.exclude("**/build/**", "**/generated/**")
+        // task registration
+        registerCompilerTask(
+            target, sourceFiles,
+            coreDirectory,
+            cacheDirectory,
+            intermediatesDirectory,
+        )
+
+        // asm transform
+        val appModuleExtension = target.extensions.getByType(BaseAppModuleExtension::class.java)
+        val androidComponents = target.extensions.getByType(AndroidComponentsExtension::class.java)
+        androidComponents.onVariants { variant ->
+            val variantName = variant.name
+            val applicationId = appModuleExtension.defaultConfig.applicationId
+
+            variant.instrumentation.apply {
+                transformClassesWith(
+                    Xpler2AsmVisitorFactory::class.java,
+                    InstrumentationScope.ALL,
+                ) { params ->
+                    params.cacheDirectory = cacheDirectory
+                    params.applicationId = applicationId
+                    params.variant = variantName
+                }
+            }
         }
+    }
+
+    private fun registerCompilerTask(
+        target: Project,
+        sourceFiles: ConfigurableFileTree,
+        coreDirectory: Directory,
+        cacheDirectory: Directory,
+        intermediatesDirectory: Directory,
+    ) {
         val compilerTask = target.tasks.register(
-            "xpler2Compiler",
+            "xpler2Compile",
             Xpler2CompilerTask::class.java,
         ) { task ->
             task.sourceFiles = sourceFiles
@@ -63,23 +107,5 @@ class Xpler2CompilerPlugin : Plugin<Project> {
                 )
             )
         )
-
-        // asm transform
-        val appModuleExtension = target.extensions.getByType(BaseAppModuleExtension::class.java)
-        val androidComponents = target.extensions.getByType(AndroidComponentsExtension::class.java)
-        androidComponents.onVariants { variant ->
-            val applicationId = appModuleExtension.defaultConfig.applicationId
-
-            variant.instrumentation.apply {
-                transformClassesWith(
-                    Xpler2AsmVisitorFactory::class.java,
-                    InstrumentationScope.ALL,
-                ) { params ->
-                    params.cacheDirectory = cacheDirectory
-                    params.applicationId = applicationId
-                    params.debuggable = variant.debuggable
-                }
-            }
-        }
     }
 }

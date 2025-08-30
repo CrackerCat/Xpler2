@@ -16,7 +16,7 @@ class Xpler2ClassVisitor(
     classVisitor: ClassVisitor,
     private val initializeCache: XplerInitializeCache,
     private val applicationId: String?,
-    private val debuggable: Boolean,
+    private val variant: String,
 ) : ClassVisitor(api, classVisitor) {
     private lateinit var mOwnerName: String
     private var mSuperName: String? = null
@@ -79,7 +79,7 @@ class Xpler2ClassVisitor(
                 descriptor = descriptor,
                 initializeCache = initializeCache,
                 applicationId = applicationId,
-                debuggable = debuggable,
+                variant = variant,
             )
         }
 
@@ -102,7 +102,7 @@ class Xpler2ClassVisitor(
                 descriptor = descriptor,
                 initializeCache = initializeCache,
                 applicationId = applicationId,
-                debuggable = debuggable,
+                variant = variant,
             )
         }
 
@@ -126,7 +126,7 @@ class Xpler2ClassVisitor(
                 descriptor = descriptor,
                 initializeCache = initializeCache,
                 applicationId = applicationId,
-                debuggable = debuggable,
+                variant = variant,
             )
         }
 

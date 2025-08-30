@@ -31,6 +31,7 @@ internal class XposedM(
     lateinit var mClassloader: ClassLoader
     lateinit var mPackageName: String
     lateinit var mProcessName: String
+    private val mUnhooks by lazy { mutableListOf<UnhookParams>() }
 
     private fun buildXposedHookerCallbackImpl(
         method: Member,
@@ -42,15 +43,14 @@ internal class XposedM(
             .apply(callback)
 
         val unhookOriginal = XposedBridge.hookMethod(method, XposedHooker(priority))
-        var unhookParams: UnhookParams? = null
-        impl.unhookParamsInner?.invoke(
-            UnhookParams(
-                mOrigin = { unhookOriginal.hookedMethod },
-                mUnhook = { unhookOriginal.unhook() },
-            ).also { unhookParams = it }
-        )
 
-        return unhookParams
+        return UnhookParams(
+            mOrigin = { unhookOriginal.hookedMethod },
+            mUnhook = { unhookOriginal.unhook() },
+        ).also {
+            impl.unhookParamsInner = it
+            mUnhooks.add(it)
+        }
     }
 
     override fun hooker(
@@ -69,9 +69,9 @@ internal class XposedM(
         callback: HookerCallback
     ): UnhookParams? {
         return hooker(method) {
+            callback.unhookParamsInner = { this.unhook }
             onBefore { callback.onBefore(this) }
             onAfter { callback.onAfter(this) }
-            onUnhook { callback.onUnhook(this) }
         }
     }
 
@@ -81,9 +81,9 @@ internal class XposedM(
         callback: HookerCallback
     ): UnhookParams? {
         return hooker(method, priority) {
+            callback.unhookParamsInner = { this.unhook }
             onBefore { callback.onBefore(this) }
             onAfter { callback.onAfter(this) }
-            onUnhook { callback.onUnhook(this) }
         }
     }
 
@@ -103,9 +103,9 @@ internal class XposedM(
         callback: HookerCallback
     ): UnhookParams? {
         return hooker(constructor) {
+            callback.unhookParamsInner = { this.unhook }
             onBefore { callback.onBefore(this) }
             onAfter { callback.onAfter(this) }
-            onUnhook { callback.onUnhook(this) }
         }
     }
 
@@ -115,11 +115,14 @@ internal class XposedM(
         callback: HookerCallback
     ): UnhookParams? {
         return hooker(constructor, priority) {
+            callback.unhookParamsInner = { this.unhook }
             onBefore { callback.onBefore(this) }
             onAfter { callback.onAfter(this) }
-            onUnhook { callback.onUnhook(this) }
         }
     }
+
+    override val unhooks: List<UnhookParams>
+        get() = mUnhooks
 
     override val api: Int
         get() = XposedBridge.getXposedVersion()

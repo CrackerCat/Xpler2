@@ -37,12 +37,12 @@ open class Xpler2CompilerTask : DefaultTask() {
         if (cache != null) {
             println("XplerInitialize: clear cache ${cache.toJson()}")
             val lsposed = cache.initializeBean.lsposedInit
-            cache.debug(lsposed).delete()
-            cache.release(lsposed).delete()
+            cache.intermediatesFile("debug").resolve(lsposed).delete()
+            cache.intermediatesFile("release").resolve(lsposed).delete()
 
             val xposed = cache.initializeBean.xposedInit
-            cache.debug(xposed).delete()
-            cache.release(xposed).delete()
+            cache.intermediatesFile("debug").resolve(xposed).delete()
+            cache.intermediatesFile("release").resolve(xposed).delete()
         }
 
         // scan all `.java` and `.kt` source files

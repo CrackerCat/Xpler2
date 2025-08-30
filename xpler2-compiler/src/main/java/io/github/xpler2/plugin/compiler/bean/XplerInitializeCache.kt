@@ -1,5 +1,6 @@
 package io.github.xpler2.plugin.compiler.bean
 
+import io.github.xpler2.plugin.variantFormat
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.gradle.api.file.Directory
@@ -28,15 +29,9 @@ data class XplerInitializeCache(
         cacheFile.writeText(toJson())
     }
 
-    fun toJson():String{
+    fun toJson(): String {
         return Json.Default.encodeToString(this)
     }
 
-    fun debug(name: String): File {
-        return File(intermediatesPath.replace("{variant}", "debug"), name)
-    }
-
-    fun release(name: String): File {
-        return File(intermediatesPath.replace("{variant}", "release"), name)
-    }
+    fun intermediatesFile(variant: String) = File(intermediatesPath.variantFormat(variant))
 }

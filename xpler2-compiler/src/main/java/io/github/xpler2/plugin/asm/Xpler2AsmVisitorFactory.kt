@@ -26,7 +26,7 @@ abstract class Xpler2AsmVisitorFactory : AsmClassVisitorFactory<Xpler2AsmVisitor
         var applicationId: String?
 
         @get:Input
-        var debuggable: Boolean
+        var variant: String
     }
 
     override fun createClassVisitor(
@@ -41,7 +41,7 @@ abstract class Xpler2AsmVisitorFactory : AsmClassVisitorFactory<Xpler2AsmVisitor
             classVisitor = nextClassVisitor,
             initializeCache = initializeCache,
             applicationId = params.applicationId,
-            debuggable = params.debuggable,
+            variant = params.variant,
         )
     }
 

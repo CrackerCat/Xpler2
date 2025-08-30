@@ -1,11 +1,10 @@
-import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("java-gradle-plugin")
     id("org.jetbrains.kotlin.jvm")
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.21"
-    id("com.vanniktech.maven.publish") version "0.32.0"
+    id("org.jetbrains.kotlin.plugin.serialization")
+    id("com.vanniktech.maven.publish")
     id("signing")
 }
 
@@ -21,8 +20,8 @@ kotlin {
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle:8.10.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+    implementation(libs.android.tools.gradle)
+    implementation(libs.kotlinx.serialization.json)
 }
 
 gradlePlugin {
@@ -61,6 +60,6 @@ mavenPublishing {
         }
     }
 
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    publishToMavenCentral()
     signAllPublications()
 }
